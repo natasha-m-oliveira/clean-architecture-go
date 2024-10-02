@@ -1,0 +1,52 @@
+generator client {
+  provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL_POSTGRES")
+}
+
+enum CartStatus {
+  pending
+  ordered
+}
+
+model Product {
+  id          String   @id
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.VarChar(200)
+  image       String?  @db.VarChar(255)
+  price       Int      @db.Integer
+  discount    Int?     @db.Integer
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  cartItems CartItem[]
+
+  @@map("products")
+}
+
+model Cart {
+  id        String     @id
+  status    CartStatus
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  items CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id
+  cartId    String   @map("cart_id")
+  productId String   @map("product_id")
+  quantity  Int      @db.SmallInt()
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("cart_items")
+}

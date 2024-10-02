@@ -29,9 +29,9 @@ func NewCreateCartUseCase(cartsRepository repositories.CartsRepository, products
 }
 
 func (uc *CreateCartUseCase) Execute(request CreateCartRequest) (*CreateCartResponse, error) {
-	var items []entities.CartItem
+	cart := entities.NewCart(entities.CartStatusPending, make([]entities.CartItem, len(request.Items)))
 
-	for _, item := range request.Items {
+	for index, item := range request.Items {
 		product, err := uc.productsRepository.FindById(item.ProductId)
 		if err != nil {
 			return nil, err
@@ -41,10 +41,8 @@ func (uc *CreateCartUseCase) Execute(request CreateCartRequest) (*CreateCartResp
 			Product: *product,
 		})
 
-		items = append(items, *cartItem)
+		cart.Items[index] = *cartItem
 	}
-
-	cart := entities.NewCart(entities.CartStatusPending, items)
 
 	err := uc.cartsRepository.Create(cart)
 	if err != nil {

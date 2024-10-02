@@ -28,7 +28,11 @@ func NewCreateProductUseCase(productsRepository repositories.ProductsRepository)
 }
 
 func (uc *CreateProductUseCase) Execute(request CreateProductRequest) (*CreateProductResponse, error) {
-	productAlreadyExists, _ := uc.productsRepository.FindByName(request.Name)
+	productAlreadyExists, err := uc.productsRepository.FindByName(request.Name)
+	if err != nil && err.Error() != (&errors.ProductNotFound{}).Error() {
+		return nil, err
+	}
+
 	if productAlreadyExists != nil {
 		return nil, &errors.ProductAlreadyExists{}
 	}
@@ -38,7 +42,7 @@ func (uc *CreateProductUseCase) Execute(request CreateProductRequest) (*CreatePr
 		Discount:    request.Discount,
 	})
 
-	err := uc.productsRepository.Create(product)
+	err = uc.productsRepository.Create(product)
 	if err != nil {
 		return nil, err
 	}
