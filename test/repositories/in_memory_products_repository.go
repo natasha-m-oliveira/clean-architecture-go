@@ -12,12 +12,12 @@ import (
 
 type InMemoryProductsRepository struct {
 	mu       sync.Mutex
-	products map[string]*entities.Product
+	products map[string]entities.Product
 }
 
 func NewInMemoryProductsRepository() *InMemoryProductsRepository {
 	return &InMemoryProductsRepository{
-		products: make(map[string]*entities.Product),
+		products: make(map[string]entities.Product),
 	}
 }
 
@@ -27,7 +27,7 @@ func (r *InMemoryProductsRepository) Create(product *entities.Product) error {
 
 	product.Id = uuid.New().String()
 
-	r.products[product.Id] = product
+	r.products[product.Id] = *product
 	return nil
 }
 
@@ -39,7 +39,7 @@ func (r *InMemoryProductsRepository) FindById(id string) (*entities.Product, err
 	if !ok {
 		return nil, &errors.ProductNotFound{}
 	}
-	return product, nil
+	return &product, nil
 }
 
 func (r *InMemoryProductsRepository) FindByName(name string) (*entities.Product, error) {
@@ -48,14 +48,14 @@ func (r *InMemoryProductsRepository) FindByName(name string) (*entities.Product,
 
 	for _, product := range r.products {
 		if product.Name == name {
-			return product, nil
+			return &product, nil
 		}
 	}
 
 	return nil, &errors.ProductNotFound{}
 }
 
-func (r *InMemoryProductsRepository) List() ([]*entities.Product, error) {
+func (r *InMemoryProductsRepository) List() ([]entities.Product, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -68,7 +68,7 @@ func (r *InMemoryProductsRepository) Save(product *entities.Product) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.products[product.Id] = product
+	r.products[product.Id] = *product
 	return nil
 }
 

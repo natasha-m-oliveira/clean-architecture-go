@@ -10,12 +10,12 @@ import (
 
 type InMemoryCartsRepository struct {
 	mu    sync.Mutex
-	carts map[string]*entities.Cart
+	carts map[string]entities.Cart
 }
 
 func NewInMemoryCartsRepository() *InMemoryCartsRepository {
 	return &InMemoryCartsRepository{
-		carts: make(map[string]*entities.Cart),
+		carts: make(map[string]entities.Cart),
 	}
 }
 
@@ -25,7 +25,7 @@ func (r *InMemoryCartsRepository) Create(cart *entities.Cart) error {
 
 	cart.Id = uuid.New().String()
 
-	r.carts[cart.Id] = cart
+	r.carts[cart.Id] = *cart
 	return nil
 }
 
@@ -37,14 +37,14 @@ func (r *InMemoryCartsRepository) FindById(id string) (*entities.Cart, error) {
 	if !ok {
 		return nil, &errors.CartNotFound{}
 	}
-	return cart, nil
+	return &cart, nil
 }
 
 func (r *InMemoryCartsRepository) Save(cart *entities.Cart) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.carts[cart.Id] = cart
+	r.carts[cart.Id] = *cart
 	return nil
 }
 
