@@ -5,7 +5,6 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
 )
@@ -24,8 +23,6 @@ func NewInMemoryProductsRepository() *InMemoryProductsRepository {
 func (r *InMemoryProductsRepository) Create(product *entities.Product) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-
-	product.Id = uuid.New().String()
 
 	r.products[product.Id] = *product
 	return nil

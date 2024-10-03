@@ -1,6 +1,10 @@
 package entities
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type CartItem struct {
 	Id        string
@@ -28,6 +32,10 @@ func NewCartItem(cartId, productId string, quantity int, options ...CartItemOpti
 		id = options[0].Id
 		createdAt = options[0].CreatedAt
 		product = options[0].Product
+	}
+
+	if id == "" {
+		id = uuid.New().String()
 	}
 
 	if createdAt.IsZero() {

@@ -1,6 +1,10 @@
 package entities
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 const (
 	CartStatusPending CartStatus = "pending"
@@ -32,6 +36,10 @@ func NewCart(status CartStatus, items []CartItem, options ...CartOptions) *Cart 
 		id = options[0].Id
 		createdAt = options[0].CreatedAt
 		updatedAt = options[0].UpdatedAt
+	}
+
+	if id == "" {
+		id = uuid.New().String()
 	}
 
 	if createdAt.IsZero() {

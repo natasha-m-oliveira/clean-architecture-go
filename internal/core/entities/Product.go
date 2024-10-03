@@ -1,6 +1,10 @@
 package entities
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Product struct {
 	Id          string
@@ -34,6 +38,10 @@ func NewProduct(name string, price int, options ...ProductOptions) *Product {
 		discount = options[0].Discount
 		createdAt = options[0].CreatedAt
 		updatedAt = options[0].UpdatedAt
+	}
+
+	if id == "" {
+		id = uuid.New().String()
 	}
 
 	if createdAt.IsZero() {
