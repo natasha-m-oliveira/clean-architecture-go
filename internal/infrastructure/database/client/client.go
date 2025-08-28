@@ -1,4 +1,4 @@
-package prisma
+package client
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/natasha-m-oliveira/clean-architecture-go/prisma/db"
 )
 
-func Init(ctx context.Context, wg *sync.WaitGroup) (*db.PrismaClient, error) {
+func NewPrismaClient(ctx context.Context, wg *sync.WaitGroup) (*db.PrismaClient, error) {
 	config := config.Config
 	url := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 

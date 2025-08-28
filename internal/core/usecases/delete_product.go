@@ -1,6 +1,9 @@
 package usecases
 
-import "github.com/natasha-m-oliveira/clean-architecture-go/internal/core/repositories"
+import (
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/repositories"
+)
 
 type (
 	DeleteProductUseCase interface {
@@ -23,12 +26,14 @@ func NewDeleteProductUseCase(productsRepository repositories.ProductsRepository)
 }
 
 func (uc deleteProductUseCase) Execute(request DeleteProductRequest) error {
-	_, err := uc.productsRepository.FindById(request.Id)
+	product, err := uc.productsRepository.FindById(request.Id)
 	if err != nil {
 		return err
 	}
 
-	err = uc.productsRepository.DeleteById(request.Id)
+	if product == nil {
+		return errors.NewProductNotFound()
+	}
 
-	return err
+	return uc.productsRepository.DeleteById(request.Id)
 }

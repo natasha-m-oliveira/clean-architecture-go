@@ -2,12 +2,13 @@ package usecases
 
 import (
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/repositories"
 )
 
 type (
 	UpdateCartItemsUseCase interface {
-		Execute(request UpdateCartItemsRequest) (*UpdateCartItemsResponse, error)
+		Execute(request UpdateCartItemsRequest) (*entities.Cart, error)
 	}
 
 	UpdateCartItemsRequest struct {
@@ -16,10 +17,6 @@ type (
 			ProductId string
 			Quantity  int
 		}
-	}
-
-	UpdateCartItemsResponse struct {
-		Cart entities.Cart
 	}
 
 	updateCartItemsUseCase struct {
@@ -35,10 +32,14 @@ func NewUpdateCartItemsUseCase(cartsRepository repositories.CartsRepository, pro
 	}
 }
 
-func (uc updateCartItemsUseCase) Execute(request UpdateCartItemsRequest) (*UpdateCartItemsResponse, error) {
+func (uc updateCartItemsUseCase) Execute(request UpdateCartItemsRequest) (*entities.Cart, error) {
 	cart, err := uc.cartsRepository.FindById(request.Id)
 	if err != nil {
 		return nil, err
+	}
+
+	if cart == nil {
+		return nil, errors.NewCartNotFound()
 	}
 
 	cart.Items = make([]entities.CartItem, len(request.Items))
@@ -47,6 +48,10 @@ func (uc updateCartItemsUseCase) Execute(request UpdateCartItemsRequest) (*Updat
 		product, err := uc.productsRepository.FindById(item.ProductId)
 		if err != nil {
 			return nil, err
+		}
+
+		if product == nil {
+			return nil, errors.NewProductNotFound()
 		}
 
 		cartItem := entities.NewCartItem(cart.Id, item.ProductId, item.Quantity, entities.CartItemOptions{
@@ -61,7 +66,5 @@ func (uc updateCartItemsUseCase) Execute(request UpdateCartItemsRequest) (*Updat
 		return nil, err
 	}
 
-	return &UpdateCartItemsResponse{
-		Cart: *cart,
-	}, nil
+	return cart, nil
 }

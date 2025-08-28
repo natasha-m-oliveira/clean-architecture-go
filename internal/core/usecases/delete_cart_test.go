@@ -35,12 +35,9 @@ func TestDeleteCart(t *testing.T) {
 		assert.NoError(t, err)
 
 		createCartResponse, err := createCartUseCase.Execute(CreateCartRequest{
-			Items: []struct {
-				ProductId string
-				Quantity  int
-			}{
+			Items: []CreateCartItemRequest{
 				{
-					ProductId: createProductResponse.Product.Id,
+					ProductId: createProductResponse.Id,
 					Quantity:  2,
 				},
 			},
@@ -49,7 +46,7 @@ func TestDeleteCart(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = deleteCartUseCase.Execute(DeleteCartRequest{
-			Id: createCartResponse.Cart.Id,
+			Id: createCartResponse.Id,
 		})
 
 		assert.NoError(t, err)
@@ -63,6 +60,6 @@ func TestDeleteCart(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.CartNotFound{}).Error(), err.Error())
+		assert.Equal(t, errors.NewCartNotFound(), err)
 	})
 }

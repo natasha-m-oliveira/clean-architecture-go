@@ -31,7 +31,7 @@ func TestDeleteProduct(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = deleteProductUseCase.Execute(DeleteProductRequest{
-			Id: createProductResponse.Product.Id,
+			Id: createProductResponse.Id,
 		})
 
 		assert.NoError(t, err)
@@ -45,6 +45,6 @@ func TestDeleteProduct(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.ProductNotFound{}).Error(), err.Error())
+		assert.Equal(t, errors.NewProductNotFound(), err)
 	})
 }

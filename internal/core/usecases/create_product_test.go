@@ -21,14 +21,14 @@ func TestCreateProduct(t *testing.T) {
 	t.Run("should be able to create a new product", func(t *testing.T) {
 		setup()
 
-		response, err := createProductUseCase.Execute(CreateProductRequest{
+		product, err := createProductUseCase.Execute(CreateProductRequest{
 			Name:  "Suriname",
 			Price: 780643,
 		})
 
 		assert.NoError(t, err)
-		assert.NotEmpty(t, response.Product.Id)
-		assert.Equal(t, "Suriname", response.Product.Name)
+		assert.NotEmpty(t, product.Id)
+		assert.Equal(t, "Suriname", product.Name)
 	})
 
 	t.Run("should not be able to create a product already exists", func(t *testing.T) {
@@ -47,6 +47,6 @@ func TestCreateProduct(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.ProductAlreadyExists{}).Error(), err.Error())
+		assert.Equal(t, errors.NewProductAlreadyExists(), err)
 	})
 }

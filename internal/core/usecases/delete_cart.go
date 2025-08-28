@@ -1,6 +1,9 @@
 package usecases
 
-import "github.com/natasha-m-oliveira/clean-architecture-go/internal/core/repositories"
+import (
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/repositories"
+)
 
 type (
 	DeleteCartUseCase interface {
@@ -23,12 +26,14 @@ func NewDeleteCartUseCase(cartsRepository repositories.CartsRepository) DeleteCa
 }
 
 func (uc deleteCartUseCase) Execute(request DeleteCartRequest) error {
-	_, err := uc.cartsRepository.FindById(request.Id)
+	cart, err := uc.cartsRepository.FindById(request.Id)
 	if err != nil {
 		return err
 	}
 
-	err = uc.cartsRepository.DeleteById(request.Id)
+	if cart == nil {
+		return errors.NewCartNotFound()
+	}
 
-	return err
+	return uc.cartsRepository.DeleteById(request.Id)
 }

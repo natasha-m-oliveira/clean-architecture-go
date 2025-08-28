@@ -35,12 +35,9 @@ func TestUpdateCartItems(t *testing.T) {
 		assert.NoError(t, err)
 
 		createCartResponse, err := createCartUseCase.Execute(CreateCartRequest{
-			Items: []struct {
-				ProductId string
-				Quantity  int
-			}{
+			Items: []CreateCartItemRequest{
 				{
-					ProductId: createProductResponse.Product.Id,
+					ProductId: createProductResponse.Id,
 					Quantity:  2,
 				},
 			},
@@ -49,20 +46,20 @@ func TestUpdateCartItems(t *testing.T) {
 		assert.NoError(t, err)
 
 		updateCartItemsResponse, err := updateCartItemsUseCase.Execute(UpdateCartItemsRequest{
-			Id: createCartResponse.Cart.Id,
+			Id: createCartResponse.Id,
 			Items: []struct {
 				ProductId string
 				Quantity  int
 			}{
 				{
-					ProductId: createProductResponse.Product.Id,
+					ProductId: createProductResponse.Id,
 					Quantity:  1,
 				},
 			},
 		})
 
 		assert.NoError(t, err)
-		assert.Equal(t, 1, updateCartItemsResponse.Cart.Items[0].Quantity)
+		assert.Equal(t, 1, updateCartItemsResponse.Items[0].Quantity)
 	})
 
 	t.Run("should not be able to update items in a non-existent cart", func(t *testing.T) {
@@ -73,7 +70,7 @@ func TestUpdateCartItems(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.CartNotFound{}).Error(), err.Error())
+		assert.Equal(t, errors.NewCartNotFound(), err)
 	})
 
 	t.Run("should not be able to update cart items if one of the products does not exist", func(t *testing.T) {
@@ -87,12 +84,9 @@ func TestUpdateCartItems(t *testing.T) {
 		assert.NoError(t, err)
 
 		createCartResponse, err := createCartUseCase.Execute(CreateCartRequest{
-			Items: []struct {
-				ProductId string
-				Quantity  int
-			}{
+			Items: []CreateCartItemRequest{
 				{
-					ProductId: createProductResponse.Product.Id,
+					ProductId: createProductResponse.Id,
 					Quantity:  2,
 				},
 			},
@@ -101,13 +95,13 @@ func TestUpdateCartItems(t *testing.T) {
 		assert.NoError(t, err)
 
 		_, err = updateCartItemsUseCase.Execute(UpdateCartItemsRequest{
-			Id: createCartResponse.Cart.Id,
+			Id: createCartResponse.Id,
 			Items: []struct {
 				ProductId string
 				Quantity  int
 			}{
 				{
-					ProductId: createProductResponse.Product.Id,
+					ProductId: createProductResponse.Id,
 					Quantity:  2,
 				},
 				{
@@ -118,6 +112,6 @@ func TestUpdateCartItems(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.ProductNotFound{}).Error(), err.Error())
+		assert.Equal(t, errors.NewProductNotFound(), err)
 	})
 }

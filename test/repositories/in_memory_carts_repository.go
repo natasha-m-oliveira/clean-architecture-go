@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
 )
 
 type InMemoryCartsRepository struct {
@@ -32,7 +31,7 @@ func (r *InMemoryCartsRepository) FindById(id string) (*entities.Cart, error) {
 
 	cart, ok := r.carts[id]
 	if !ok {
-		return nil, &errors.CartNotFound{}
+		return nil, nil
 	}
 	return &cart, nil
 }

@@ -31,11 +31,11 @@ func TestGetProductById(t *testing.T) {
 		assert.NoError(t, err)
 
 		getProductByIdResponse, err := getProductByIdUseCase.Execute(GetProductByIdRequest{
-			Id: createProductResponse.Product.Id,
+			Id: createProductResponse.Id,
 		})
 
 		assert.NoError(t, err)
-		assert.Equal(t, createProductResponse.Product.Id, getProductByIdResponse.Product.Id)
+		assert.Equal(t, createProductResponse.Id, getProductByIdResponse.Id)
 	})
 
 	t.Run("should not be able to get non-existent product by id", func(t *testing.T) {
@@ -46,6 +46,6 @@ func TestGetProductById(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.ProductNotFound{}).Error(), err.Error())
+		assert.Equal(t, errors.NewProductNotFound(), err)
 	})
 }

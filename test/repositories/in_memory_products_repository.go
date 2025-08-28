@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
 )
 
 type InMemoryProductsRepository struct {
@@ -34,7 +33,7 @@ func (r *InMemoryProductsRepository) FindById(id string) (*entities.Product, err
 
 	product, ok := r.products[id]
 	if !ok {
-		return nil, &errors.ProductNotFound{}
+		return nil, nil
 	}
 	return &product, nil
 }
@@ -49,7 +48,7 @@ func (r *InMemoryProductsRepository) FindByName(name string) (*entities.Product,
 		}
 	}
 
-	return nil, &errors.ProductNotFound{}
+	return nil, nil
 }
 
 func (r *InMemoryProductsRepository) List() ([]entities.Product, error) {

@@ -1,4 +1,4 @@
-package handler
+package handlers
 
 import (
 	"errors"
@@ -18,12 +18,12 @@ func TestHandleErrors(t *testing.T) {
 	}{
 		{
 			name:       "ProductNotFound should return status not found",
-			err:        _errors.ProductNotFound{},
+			err:        _errors.NewProductNotFound(),
 			statusCode: http.StatusNotFound,
 		},
 		{
 			name:       "ProductAlreadyExists should return status bad request",
-			err:        _errors.ProductAlreadyExists{},
+			err:        _errors.NewProductAlreadyExists(),
 			statusCode: http.StatusBadRequest,
 		},
 		{

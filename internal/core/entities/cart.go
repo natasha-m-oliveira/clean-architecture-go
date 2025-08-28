@@ -13,6 +13,10 @@ const (
 
 type CartStatus string
 
+func (s CartStatus) String() string {
+	return string(s)
+}
+
 type Cart struct {
 	Id        string
 	Status    CartStatus

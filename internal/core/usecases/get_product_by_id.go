@@ -2,20 +2,17 @@ package usecases
 
 import (
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/repositories"
 )
 
 type (
 	GetProductByIdUseCase interface {
-		Execute(request GetProductByIdRequest) (*GetProductByIdResponse, error)
+		Execute(request GetProductByIdRequest) (*entities.Product, error)
 	}
 
 	GetProductByIdRequest struct {
 		Id string
-	}
-
-	GetProductByIdResponse struct {
-		Product entities.Product
 	}
 
 	getProductByIdUseCase struct {
@@ -29,13 +26,15 @@ func NewGetProductByIdUseCase(productsRepository repositories.ProductsRepository
 	}
 }
 
-func (uc getProductByIdUseCase) Execute(request GetProductByIdRequest) (*GetProductByIdResponse, error) {
+func (uc getProductByIdUseCase) Execute(request GetProductByIdRequest) (*entities.Product, error) {
 	product, err := uc.productsRepository.FindById(request.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &GetProductByIdResponse{
-		Product: *product,
-	}, nil
+	if product == nil {
+		return nil, errors.NewProductNotFound()
+	}
+
+	return product, nil
 }

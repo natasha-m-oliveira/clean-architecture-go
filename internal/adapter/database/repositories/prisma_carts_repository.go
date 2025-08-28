@@ -2,11 +2,11 @@ package repositories
 
 import (
 	"context"
+	"errors"
 
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/adapter/repositories/mappers"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/adapter/database/mappers"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/adapter/utils"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/prisma/db"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
 )
@@ -32,11 +32,8 @@ func (r *PrismaCartsRepository) Create(cart *entities.Cart) error {
 	transaction := append(itemsTransaction, cartTransaction)
 
 	err := r.client.Prisma.Transaction(transaction...).Exec(r.ctx)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 func (r *PrismaCartsRepository) createItemsTransaction(items []entities.CartItem) []transaction.Transaction {
@@ -53,13 +50,17 @@ func (r *PrismaCartsRepository) createItemsTransaction(items []entities.CartItem
 
 func (r *PrismaCartsRepository) FindById(id string) (*entities.Cart, error) {
 	model, err := r.client.Cart.FindUnique(db.Cart.ID.Equals(id)).Exec(r.ctx)
-	if err != nil {
-		return nil, utils.ParseError(err, errors.CartNotFound{})
+	if err != nil && errors.Is(err, db.ErrNotFound) {
+		return nil, nil
 	}
 
-	Cart := (mappers.PrismaCartMapper{}).ToDomain(*model)
+	if err != nil {
+		return nil, err
+	}
 
-	return &Cart, err
+	cart := (mappers.PrismaCartMapper{}).ToDomain(*model)
+
+	return &cart, err
 }
 
 func (r *PrismaCartsRepository) List() ([]entities.Cart, error) {
@@ -80,11 +81,11 @@ func (r *PrismaCartsRepository) Save(Cart *entities.Cart) error {
 
 	_, err := r.client.Cart.FindUnique(db.Cart.ID.Equals(Cart.Id)).Update(optional...).Exec(r.ctx)
 
-	return utils.ParseError(err, errors.CartNotFound{})
+	return err
 }
 
 func (r *PrismaCartsRepository) DeleteById(id string) error {
 	_, err := r.client.Cart.FindUnique(db.Cart.ID.Equals(id)).Delete().Exec(r.ctx)
 
-	return utils.ParseError(err, errors.CartNotFound{})
+	return err
 }

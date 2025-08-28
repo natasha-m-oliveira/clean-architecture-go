@@ -4,3 +4,12 @@
 .env.test.local
 .env.production.local
 .env.local
+
+.idea/
+volume/
+tmp/
+.vscode
+__debug_*
+coverage.out
+coverage.html
+prisma/db/

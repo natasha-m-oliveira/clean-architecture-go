@@ -7,14 +7,10 @@ import (
 
 type (
 	ListProductsUseCase interface {
-		Execute(request ListProductsRequest) (*ListProductsResponse, error)
+		Execute(request ListProductsRequest) ([]entities.Product, error)
 	}
 
 	ListProductsRequest struct {
-	}
-
-	ListProductsResponse struct {
-		Products []entities.Product
 	}
 
 	listProductsUseCase struct {
@@ -28,10 +24,6 @@ func NewListProductsUseCase(productsRepository repositories.ProductsRepository) 
 	}
 }
 
-func (uc listProductsUseCase) Execute(request ListProductsRequest) (*ListProductsResponse, error) {
-	products, err := uc.productsRepository.List()
-
-	return &ListProductsResponse{
-		Products: products,
-	}, err
+func (uc listProductsUseCase) Execute(request ListProductsRequest) ([]entities.Product, error) {
+	return uc.productsRepository.List()
 }

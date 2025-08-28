@@ -2,20 +2,17 @@ package usecases
 
 import (
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/repositories"
 )
 
 type (
 	GetCartByIdUseCase interface {
-		Execute(request GetCartByIdRequest) (*GetCartByIdResponse, error)
+		Execute(request GetCartByIdRequest) (*entities.Cart, error)
 	}
 
 	GetCartByIdRequest struct {
 		Id string
-	}
-
-	GetCartByIdResponse struct {
-		Cart entities.Cart
 	}
 
 	getCartByIdUseCase struct {
@@ -29,13 +26,15 @@ func NewGetCartByIdUseCase(cartsRepository repositories.CartsRepository) GetCart
 	}
 }
 
-func (uc getCartByIdUseCase) Execute(request GetCartByIdRequest) (*GetCartByIdResponse, error) {
+func (uc getCartByIdUseCase) Execute(request GetCartByIdRequest) (*entities.Cart, error) {
 	cart, err := uc.cartsRepository.FindById(request.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &GetCartByIdResponse{
-		Cart: *cart,
-	}, nil
+	if cart == nil {
+		return nil, errors.NewCartNotFound()
+	}
+
+	return cart, nil
 }

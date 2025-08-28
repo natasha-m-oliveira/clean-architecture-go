@@ -35,12 +35,9 @@ func TestGetCartById(t *testing.T) {
 		assert.NoError(t, err)
 
 		createCartResponse, err := createCartUseCase.Execute(CreateCartRequest{
-			Items: []struct {
-				ProductId string
-				Quantity  int
-			}{
+			Items: []CreateCartItemRequest{
 				{
-					ProductId: createProductResponse.Product.Id,
+					ProductId: createProductResponse.Id,
 					Quantity:  2,
 				},
 			},
@@ -49,11 +46,11 @@ func TestGetCartById(t *testing.T) {
 		assert.NoError(t, err)
 
 		getCartByIdResponse, err := getCartByIdUseCase.Execute(GetCartByIdRequest{
-			Id: createCartResponse.Cart.Id,
+			Id: createCartResponse.Id,
 		})
 
 		assert.NoError(t, err)
-		assert.Equal(t, createCartResponse.Cart.Id, getCartByIdResponse.Cart.Id)
+		assert.Equal(t, createCartResponse.Id, getCartByIdResponse.Id)
 	})
 
 	t.Run("should not be able to get non-existent cart by id", func(t *testing.T) {
@@ -64,6 +61,6 @@ func TestGetCartById(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.CartNotFound{}).Error(), err.Error())
+		assert.Equal(t, errors.NewCartNotFound(), err)
 	})
 }

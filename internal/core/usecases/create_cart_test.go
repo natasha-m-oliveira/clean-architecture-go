@@ -33,29 +33,23 @@ func TestCreateCart(t *testing.T) {
 		assert.NoError(t, err)
 
 		createCartResponse, err := createCartUseCase.Execute(CreateCartRequest{
-			Items: []struct {
-				ProductId string
-				Quantity  int
-			}{
+			Items: []CreateCartItemRequest{
 				{
-					ProductId: createProductResponse.Product.Id,
+					ProductId: createProductResponse.Id,
 					Quantity:  2,
 				},
 			},
 		})
 
 		assert.NoError(t, err)
-		assert.Equal(t, 1, len(createCartResponse.Cart.Items))
+		assert.Equal(t, 1, len(createCartResponse.Items))
 	})
 
 	t.Run("should not be able to create a cart if one of the products does not exist", func(t *testing.T) {
 		setup()
 
 		_, err := createCartUseCase.Execute(CreateCartRequest{
-			Items: []struct {
-				ProductId string
-				Quantity  int
-			}{
+			Items: []CreateCartItemRequest{
 				{
 					ProductId: "invalid-product-id",
 					Quantity:  2,
@@ -64,6 +58,6 @@ func TestCreateCart(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Equal(t, (&errors.ProductNotFound{}).Error(), err.Error())
+		assert.Equal(t, errors.NewProductNotFound(), err)
 	})
 }

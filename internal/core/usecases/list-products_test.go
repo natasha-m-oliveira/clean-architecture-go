@@ -32,7 +32,7 @@ func TestListProducts(t *testing.T) {
 		listProductsResponse, err := listProductsUseCase.Execute(ListProductsRequest{})
 
 		assert.NoError(t, err)
-		assert.Equal(t, 1, len(listProductsResponse.Products))
-		assert.Equal(t, createProductResponse.Product.Id, listProductsResponse.Products[0].Id)
+		assert.Equal(t, 1, len(listProductsResponse))
+		assert.Equal(t, createProductResponse.Id, listProductsResponse[0].Id)
 	})
 }

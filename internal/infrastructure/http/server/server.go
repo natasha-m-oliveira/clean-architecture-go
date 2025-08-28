@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	appConfig "github.com/natasha-m-oliveira/clean-architecture-go/internal/infrastructure/config"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infrastructure/database/prisma"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infrastructure/database/client"
 
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infrastructure/http/router"
 )
@@ -26,7 +26,7 @@ func (config *config) WithWebServer(ctx context.Context, wg *sync.WaitGroup) *co
 		panic(fmt.Sprintf("error parsing port to int: %v", err))
 	}
 
-	prismaClient, err := prisma.Init(ctx, wg)
+	prismaClient, err := client.NewPrismaClient(ctx, wg)
 	if err != nil {
 		panic(fmt.Sprintf("Database connection failed: %v", err.Error()))
 	}

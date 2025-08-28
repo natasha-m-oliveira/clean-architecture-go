@@ -8,7 +8,7 @@ import (
 
 type (
 	CreateProductUseCase interface {
-		Execute(request CreateProductRequest) (*CreateProductResponse, error)
+		Execute(request CreateProductRequest) (*entities.Product, error)
 	}
 
 	CreateProductRequest struct {
@@ -16,10 +16,6 @@ type (
 		Description string
 		Price       int
 		Discount    int
-	}
-
-	CreateProductResponse struct {
-		Product entities.Product
 	}
 
 	createProductUseCase struct {
@@ -33,17 +29,17 @@ func NewCreateProductUseCase(productsRepository repositories.ProductsRepository)
 	}
 }
 
-func (uc createProductUseCase) Execute(request CreateProductRequest) (*CreateProductResponse, error) {
-	productAlreadyExists, err := uc.productsRepository.FindByName(request.Name)
-	if err != nil && err.Error() != (&errors.ProductNotFound{}).Error() {
+func (uc createProductUseCase) Execute(request CreateProductRequest) (*entities.Product, error) {
+	product, err := uc.productsRepository.FindByName(request.Name)
+	if err != nil {
 		return nil, err
 	}
 
-	if productAlreadyExists != nil {
-		return nil, &errors.ProductAlreadyExists{}
+	if product != nil {
+		return nil, errors.NewProductAlreadyExists()
 	}
 
-	product := entities.NewProduct(request.Name, request.Price, entities.ProductOptions{
+	product = entities.NewProduct(request.Name, request.Price, entities.ProductOptions{
 		Description: request.Description,
 		Discount:    request.Discount,
 	})
@@ -53,7 +49,5 @@ func (uc createProductUseCase) Execute(request CreateProductRequest) (*CreatePro
 		return nil, err
 	}
 
-	return &CreateProductResponse{
-		Product: *product,
-	}, nil
+	return product, nil
 }
