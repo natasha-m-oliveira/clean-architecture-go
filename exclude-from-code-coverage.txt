@@ -1,1 +1,0 @@
-github.com/natasha-m-oliveira/clean-architecture-go/prisma/**/*.go

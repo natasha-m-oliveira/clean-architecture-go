@@ -23,7 +23,7 @@ test/
 To run all unit tests in the project, use:
 
 ```sh
-go test ./... -coverprofile=coverage.out && ./exclude-from-code-coverage.sh && go tool cover -html=coverage.out
+./generate_coverage.sh
 ```
 
 ## How to Run the Project
