@@ -9,11 +9,9 @@ This project aims to provide a template application using **Clean Architecture**
 The structure follows clean architecture principles, separating domain, use cases, adapters (interfaces), and infrastructure layers.
 
 ```
-cmd/
-internal/
-  adapter/
-  core/
-  infrastructure/
+adapter/
+core/
+infrastructure/
 prisma/
 test/
 ```
@@ -50,7 +48,7 @@ To run all unit tests in the project, use:
 
 5. **Start the application**  
   ```sh
-  go run cmd/main.go
+  go run main.go
   ```
 
 ## Technologies Used

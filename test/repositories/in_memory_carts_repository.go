@@ -3,7 +3,7 @@ package repositories
 import (
 	"sync"
 
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
+	"github.com/natasha-m-oliveira/clean-architecture-go/core/entities"
 )
 
 type InMemoryCartsRepository struct {

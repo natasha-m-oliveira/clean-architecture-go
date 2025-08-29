@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/entities"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/core/usecases"
+	"github.com/natasha-m-oliveira/clean-architecture-go/core/entities"
+	"github.com/natasha-m-oliveira/clean-architecture-go/core/usecases"
 	"github.com/stretchr/testify/mock"
 )
 
