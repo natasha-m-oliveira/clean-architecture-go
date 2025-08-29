@@ -26,23 +26,28 @@ func NewPrismaCartsRepository(client *db.PrismaClient, ctx context.Context) *Pri
 func (r *PrismaCartsRepository) Create(cart *entities.Cart) error {
 	status, optional := (mappers.PrismaCartMapper{}).ToPrisma(*cart)
 
-	cartTransaction := r.client.Cart.CreateOne(status, optional...).Tx()
-	itemsTransaction := r.createItemsTransaction(cart.Items)
+	_, err := r.client.Cart.CreateOne(status, optional...).Exec(r.ctx)
+	if err != nil {
+		return err
+	}
 
-	transaction := append(itemsTransaction, cartTransaction)
+	itemsTransactions := r.createItemsTransaction(cart.Items)
 
-	err := r.client.Prisma.Transaction(transaction...).Exec(r.ctx)
+	err = r.client.Prisma.Transaction(itemsTransactions...).Exec(r.ctx)
+	if err != nil {
+		r.client.Cart.FindUnique(db.Cart.ID.Equals(cart.Id)).Delete().Exec(r.ctx)
+	}
 
 	return err
 }
 
 func (r *PrismaCartsRepository) createItemsTransaction(items []entities.CartItem) []transaction.Transaction {
-	transactions := make([]transaction.Transaction, len(items))
+	transactions := make([]transaction.Transaction, 0, len(items))
 
 	for _, item := range items {
 		quantity, cart, product, optional := (mappers.PrismaCartItemMapper{}).ToPrisma(item)
-
-		r.client.CartItem.CreateOne(quantity, cart, product, optional...)
+		tx := r.client.CartItem.CreateOne(quantity, cart, product, optional...).Tx()
+		transactions = append(transactions, tx)
 	}
 
 	return transactions

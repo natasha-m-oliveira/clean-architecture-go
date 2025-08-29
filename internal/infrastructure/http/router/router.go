@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -114,7 +113,7 @@ func (engine *ginEngine) setAppHandlers(router *gin.Engine) {
 		{
 			products.POST("/", engine.wrapper(engine.createProductController.Execute))
 			products.DELETE("/:id", engine.wrapper(engine.deleteProductController.Execute))
-			products.GET("/:id", engine.wrapper(engine.deleteProductController.Execute))
+			products.GET("/:id", engine.wrapper(engine.getProductByIdController.Execute))
 			products.GET("/", engine.wrapper(engine.listProductsController.Execute))
 		}
 
@@ -131,12 +130,9 @@ func (engine *ginEngine) wrapper(callback func(w http.ResponseWriter, r *http.Re
 		rw := ctx.Writer
 		req := ctx.Request
 
-		reconstructedPath := ctx.FullPath()
 		for _, param := range ctx.Params {
-			reconstructedPath = strings.Replace(reconstructedPath, ":"+param.Key, param.Value, 1)
+			req.SetPathValue(param.Key, param.Value)
 		}
-
-		req.URL.Path = reconstructedPath
 
 		callback(rw, req)
 	}

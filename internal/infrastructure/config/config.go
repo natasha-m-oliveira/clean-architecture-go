@@ -1,12 +1,14 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
 var Config = &AppConfig{}
 
 type AppConfig struct {
 	AppName        string `mapstructure:"app_name"`
-	AppVersio      string `mapstructure:"app_version"`
+	AppVersion     string `mapstructure:"app_version"`
 	DBName         string `mapstructure:"db_name"`
 	DBHost         string `mapstructure:"db_host"`
 	DBPort         string `mapstructure:"db_port"`
@@ -19,6 +21,7 @@ type AppConfig struct {
 
 func Load() error {
 	v := viper.New()
+	v.SetConfigFile(".env")
 	v.BindEnv("app_name")
 	v.BindEnv("app_version")
 	v.BindEnv("db_name")
@@ -29,6 +32,10 @@ func Load() error {
 	v.SetDefault("logging_level", "info")
 	v.SetDefault("http_server_port", "8080")
 	v.SetDefault("server_timeout", "10")
+
+	if err := v.ReadInConfig(); err != nil {
+		return err
+	}
 
 	v.AutomaticEnv()
 	if err := v.Unmarshal(Config); err != nil {

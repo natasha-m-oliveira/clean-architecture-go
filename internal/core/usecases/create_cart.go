@@ -48,7 +48,7 @@ func (uc createCartUseCase) Execute(request CreateCartRequest) (*entities.Cart, 
 			return nil, errors.NewProductNotFound()
 		}
 
-		cartItem := entities.NewCartItem("", item.ProductId, item.Quantity, entities.CartItemOptions{
+		cartItem := entities.NewCartItem(cart.Id, item.ProductId, item.Quantity, entities.CartItemOptions{
 			Product: *product,
 		})
 

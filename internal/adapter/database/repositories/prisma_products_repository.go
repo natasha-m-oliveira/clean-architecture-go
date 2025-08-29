@@ -26,7 +26,7 @@ func (r *PrismaProductsRepository) Create(product *entities.Product) error {
 	name, price, optional := (mappers.PrismaProductMapper{}).ToPrisma(*product)
 
 	_, err := r.client.Product.CreateOne(name, price, optional...).Exec(r.ctx)
-	
+
 	return err
 }
 
