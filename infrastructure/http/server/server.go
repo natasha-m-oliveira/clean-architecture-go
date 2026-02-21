@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	appConfig "github.com/natasha-m-oliveira/clean-architecture-go/infrastructure/config"
-	"github.com/natasha-m-oliveira/clean-architecture-go/infrastructure/database/prisma/client"
+	"github.com/natasha-m-oliveira/clean-architecture-go/infrastructure/database/sqlc/connection"
 
 	"github.com/natasha-m-oliveira/clean-architecture-go/infrastructure/http/router"
 )
@@ -26,7 +26,12 @@ func (config *config) WithWebServer(ctx context.Context, wg *sync.WaitGroup) *co
 		panic(fmt.Sprintf("error parsing port to int: %v", err))
 	}
 
-	prismaClient, err := client.NewPrismaClient(ctx, wg)
+	// prismaClient, err := client.NewPrismaClient(ctx, wg)
+	// if err != nil {
+	// 	panic(fmt.Sprintf("Database connection failed: %v", err.Error()))
+	// }
+
+	sqlcConnection, err := connection.NewSqlcConnection(ctx, wg)
 	if err != nil {
 		panic(fmt.Sprintf("Database connection failed: %v", err.Error()))
 	}
@@ -34,7 +39,7 @@ func (config *config) WithWebServer(ctx context.Context, wg *sync.WaitGroup) *co
 	server := router.
 		NewGinServer().
 		WithPort(intPort).
-		WithControllers(prismaClient, ctx)
+		WithControllers(sqlcConnection, ctx)
 
 	fmt.Println("Router server has been successfully configured.")
 

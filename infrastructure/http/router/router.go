@@ -10,10 +10,10 @@ import (
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"github.com/natasha-m-oliveira/clean-architecture-go/adapter/database/prisma/repositories"
+	"github.com/jackc/pgx/v5"
+	"github.com/natasha-m-oliveira/clean-architecture-go/adapter/database/sqlc/repositories"
 	"github.com/natasha-m-oliveira/clean-architecture-go/adapter/http/controllers"
 	"github.com/natasha-m-oliveira/clean-architecture-go/core/usecases"
-	"github.com/natasha-m-oliveira/clean-architecture-go/prisma/db"
 )
 
 type (
@@ -46,9 +46,9 @@ func (engine *ginEngine) WithPort(port int64) *ginEngine {
 	return engine
 }
 
-func (engine *ginEngine) WithControllers(prismaClient *db.PrismaClient, ctx context.Context) *ginEngine {
-	productsRepository := repositories.NewPrismaProductsRepository(prismaClient, ctx)
-	cartsRepository := repositories.NewPrismaCartsRepository(prismaClient, ctx)
+func (engine *ginEngine) WithControllers(sqlcConnection *pgx.Conn, ctx context.Context) *ginEngine {
+	productsRepository := repositories.NewSqlcProductsRepository(sqlcConnection, ctx)
+	cartsRepository := repositories.NewSqlcCartsRepository(sqlcConnection, ctx)
 
 	createProductUseCase := usecases.NewCreateProductUseCase(productsRepository)
 	deleteProductUseCase := usecases.NewDeleteProductUseCase(productsRepository)

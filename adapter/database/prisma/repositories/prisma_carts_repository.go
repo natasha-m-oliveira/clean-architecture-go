@@ -7,6 +7,7 @@ import (
 	"github.com/natasha-m-oliveira/clean-architecture-go/adapter/database/prisma/mappers"
 	"github.com/natasha-m-oliveira/clean-architecture-go/adapter/utils"
 	"github.com/natasha-m-oliveira/clean-architecture-go/core/entities"
+	"github.com/natasha-m-oliveira/clean-architecture-go/core/repositories"
 	"github.com/natasha-m-oliveira/clean-architecture-go/prisma/db"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
 )
@@ -16,7 +17,7 @@ type PrismaCartsRepository struct {
 	ctx    context.Context
 }
 
-func NewPrismaCartsRepository(client *db.PrismaClient, ctx context.Context) *PrismaCartsRepository {
+func NewPrismaCartsRepository(client *db.PrismaClient, ctx context.Context) repositories.CartsRepository {
 	return &PrismaCartsRepository{
 		client: client,
 		ctx:    ctx,

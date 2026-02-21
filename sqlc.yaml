@@ -1,0 +1,27 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "sqlc/queries/"
+    schema: "sqlc/schema.sql"
+    gen:
+      go:
+        package: "db"
+        out: "sqlc/db"
+        sql_package: "pgx/v5"
+        overrides:
+          - db_type: "timestamptz"
+            go_type: "time.Time"
+          - db_type: "pg_catalog.timestamptz"
+            go_type: "time.Time"
+          - db_type: "pg_catalog.timestamp"
+            go_type: "time.Time"
+          - db_type: "int2"
+            go_type: "int"
+          - db_type: "int4"
+            go_type: "int"
+          - db_type: "int8"
+            go_type: "int"
+          - db_type: "pg_catalog.int2"
+            go_type: "int"
+          - db_type: "pg_catalog.int4"
+            go_type: "int"
