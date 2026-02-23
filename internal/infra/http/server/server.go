@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
-
-	"github.com/go-chi/chi/v5"
 )
 
 type Server struct {
 	httpServer *http.Server
 }
 
-func NewServer(router chi.Router) *Server {
+func NewServer(router http.Handler) *Server {
 	return &Server{
 		httpServer: &http.Server{
 			Addr:    ":8080",
