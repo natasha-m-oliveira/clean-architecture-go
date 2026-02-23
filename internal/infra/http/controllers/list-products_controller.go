@@ -5,7 +5,7 @@ import (
 
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/app/usecases"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/dtos/output"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/handlers"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/mappers"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/render"
 )
@@ -24,9 +24,8 @@ func NewListProductsController(listProductsUseCase usecases.ListProductsUseCase)
 
 func (c ListProductsController) Execute(w http.ResponseWriter, r *http.Request) {
 	createProductResponse, err := c.listProductsUseCase.Execute(usecases.ListProductsRequest{})
-
 	if err != nil {
-		handlers.HandleErrors(w, err)
+		errors.WriteError(w, err)
 		return
 	}
 
@@ -36,5 +35,5 @@ func (c ListProductsController) Execute(w http.ResponseWriter, r *http.Request) 
 		output[i] = c.productMapper.ToHttp(product)
 	}
 
-	render.NewSuccess(output, http.StatusOK).Send(w)
+	render.NewResponse(output, http.StatusOK).Send(w)
 }

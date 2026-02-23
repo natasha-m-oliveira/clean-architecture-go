@@ -9,16 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSuccess(t *testing.T) {
-	type ExpectedSuccess struct {
+func TestResponse(t *testing.T) {
+	type ExpectedResponse struct {
 		Test string
 	}
 
 	expectedStatusCode := http.StatusOK
-	expectedesult := ExpectedSuccess{Test: "test"}
+	expectedResult := ExpectedResponse{Test: "test"}
 	expectedBody := `{"test":"test"}`
 	w := httptest.NewRecorder()
-	err := NewSuccess(expectedesult, expectedStatusCode)
+	err := NewResponse(expectedResult, expectedStatusCode)
 	err.Send(w)
 
 	result := strings.TrimSpace(w.Body.String())

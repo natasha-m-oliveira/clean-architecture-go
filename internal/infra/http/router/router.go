@@ -36,7 +36,7 @@ func NewRouter(ctx context.Context, wg *sync.WaitGroup, env *config.Env) chi.Rou
 	cartsRepository := repositories.NewInMemoryCartsRepository()
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		render.NewSuccess("OK", http.StatusOK).Send(w)
+		render.NewResponse("OK", http.StatusOK).Send(w)
 	})
 
 	r.Route("/api", func(r chi.Router) {

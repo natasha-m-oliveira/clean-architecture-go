@@ -4,7 +4,7 @@ import "github.com/go-playground/validator/v10"
 
 type CreateCartInput struct {
 	Items []struct {
-		ProductId string `json:"productId" validate:"required"`
+		ProductId string `json:"productId" validate:"required,min=3"`
 		Quantity  int    `json:"quantity" validate:"required,gte=1"`
 	} `json:"items" validate:"required,dive,required"`
 }

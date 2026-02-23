@@ -5,19 +5,19 @@ import (
 	"net/http"
 )
 
-type Success struct {
+type Response struct {
 	statusCode int
 	result     any
 }
 
-func NewSuccess(result any, status int) Success {
-	return Success{
+func NewResponse(result any, status int) Response {
+	return Response{
 		result:     result,
 		statusCode: status,
 	}
 }
 
-func (success Success) Send(writer http.ResponseWriter) {
+func (success Response) Send(writer http.ResponseWriter) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(success.statusCode)
 	json.NewEncoder(writer).Encode(success.result)

@@ -5,7 +5,7 @@ import (
 
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/app/usecases"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/dtos/input"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/handlers"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/mappers"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/render"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/utils"
@@ -26,12 +26,12 @@ func NewCreateProductController(createProductUseCase usecases.CreateProductUseCa
 func (c CreateProductController) Execute(w http.ResponseWriter, r *http.Request) {
 	createProductInput, err := utils.DecodeBody(r.Body, input.CreateProductInput{})
 	if err != nil {
-		render.NewError(err, http.StatusBadRequest).Send(w)
+		errors.WriteError(w, err)
 		return
 	}
 
 	if err := createProductInput.Validate(); err != nil {
-		render.NewError(err, http.StatusBadRequest).Send(w)
+		errors.WriteError(w, err)
 		return
 	}
 
@@ -42,11 +42,11 @@ func (c CreateProductController) Execute(w http.ResponseWriter, r *http.Request)
 		Discount:    createProductInput.Discount,
 	})
 	if err != nil {
-		handlers.HandleErrors(w, err)
+		errors.WriteError(w, err)
 		return
 	}
 
 	output := c.productMapper.ToHttp(createProductResponse.Product)
 
-	render.NewSuccess(output, http.StatusCreated).Send(w)
+	render.NewResponse(output, http.StatusCreated).Send(w)
 }

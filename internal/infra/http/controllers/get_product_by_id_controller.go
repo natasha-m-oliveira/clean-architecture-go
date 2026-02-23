@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/app/usecases"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/handlers"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/mappers"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/render"
 )
@@ -30,11 +30,11 @@ func (c GetProductByIdController) Execute(w http.ResponseWriter, r *http.Request
 	})
 
 	if err != nil {
-		handlers.HandleErrors(w, err)
+		errors.WriteError(w, err)
 		return
 	}
 
 	output := c.productMapper.ToHttp(createProductResponse.Product)
 
-	render.NewSuccess(output, http.StatusOK).Send(w)
+	render.NewResponse(output, http.StatusOK).Send(w)
 }

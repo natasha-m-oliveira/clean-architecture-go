@@ -1,4 +1,4 @@
-package handlers
+package errors
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHandleErrors(t *testing.T) {
+func TestWriteError(t *testing.T) {
 	tests := []struct {
 		name       string
 		err        error
@@ -24,7 +24,7 @@ func TestHandleErrors(t *testing.T) {
 		{
 			name:       "ProductAlreadyExists should return status bad request",
 			err:        _errors.ProductAlreadyExists{},
-			statusCode: http.StatusBadRequest,
+			statusCode: http.StatusConflict,
 		},
 		{
 			name:       "Other error should return status internal server error",
@@ -36,7 +36,7 @@ func TestHandleErrors(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
-			HandleErrors(w, test.err)
+			WriteError(w, test.err)
 
 			assert.Equal(t, test.statusCode, w.Result().StatusCode)
 		})

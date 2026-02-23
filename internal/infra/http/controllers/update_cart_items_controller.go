@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/app/usecases"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/dtos/input"
-	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/handlers"
+	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/mappers"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/render"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/utils"
@@ -31,12 +31,12 @@ func (c UpdateCartItemsController) Execute(w http.ResponseWriter, r *http.Reques
 
 	updateCartInput, err := utils.DecodeBody(r.Body, input.UpdateCartItemsInput{})
 	if err != nil {
-		render.NewError(err, http.StatusBadRequest).Send(w)
+		errors.WriteError(w, err)
 		return
 	}
 
 	if err := updateCartInput.Validate(); err != nil {
-		render.NewError(err, http.StatusBadRequest).Send(w)
+		errors.WriteError(w, err)
 		return
 	}
 
@@ -49,11 +49,11 @@ func (c UpdateCartItemsController) Execute(w http.ResponseWriter, r *http.Reques
 	})
 
 	if err != nil {
-		handlers.HandleErrors(w, err)
+		errors.WriteError(w, err)
 		return
 	}
 
 	output := c.cartMapper.ToHttp(updateCartItemsResponse.Cart)
 
-	render.NewSuccess(output, http.StatusOK).Send(w)
+	render.NewResponse(output, http.StatusOK).Send(w)
 }
