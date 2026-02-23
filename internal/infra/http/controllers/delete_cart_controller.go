@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/app/usecases"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/render"
@@ -22,7 +21,7 @@ func NewDeleteCartController(
 }
 
 func (c DeleteCartController) Execute(w http.ResponseWriter, r *http.Request) {
-	cartId := chi.URLParam(r, "id")
+	cartId := r.PathValue("id")
 
 	err := c.deleteCartUseCase.Execute(usecases.DeleteCartRequest{
 		Id: cartId,

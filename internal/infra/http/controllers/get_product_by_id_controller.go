@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/app/usecases"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/errors"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/mappers"
@@ -23,7 +22,7 @@ func NewGetProductByIdController(getProductByIdUseCase usecases.GetProductByIdUs
 }
 
 func (c GetProductByIdController) Execute(w http.ResponseWriter, r *http.Request) {
-	productId := chi.URLParam(r, "id")
+	productId := r.PathValue("id")
 
 	createProductResponse, err := c.getProductByIdUseCase.Execute(usecases.GetProductByIdRequest{
 		Id: productId,

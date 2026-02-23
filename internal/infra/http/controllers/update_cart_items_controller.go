@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/app/usecases"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/dtos/input"
 	"github.com/natasha-m-oliveira/clean-architecture-go/internal/infra/http/errors"
@@ -27,7 +26,7 @@ func NewUpdateCartItemsController(
 }
 
 func (c UpdateCartItemsController) Execute(w http.ResponseWriter, r *http.Request) {
-	cartId := chi.URLParam(r, "id")
+	cartId := r.PathValue("id")
 
 	updateCartInput, err := utils.DecodeBody(r.Body, input.UpdateCartItemsInput{})
 	if err != nil {
